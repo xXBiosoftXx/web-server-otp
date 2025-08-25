@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  node-red:
+    image: nodered/node-red:latest
+    container_name: DIC-node-red
+    ports:
+      - 8501:1880
+    volumes:
+      - ./node-red/data:/data
+    environment:
+      - TZ=Asia/Bangkok
+    user: "1000:1000"
+    networks:
+      - DIC-network
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: DIC-nginx
+    ports:
+      - 8500:80
+    volumes:
+      - ./nginx/content:/usr/share/nginx/html:ro
+    networks:
+      - DIC-network
+    restart: unless-stopped
+
+networks:
+  DIC-network:
+    name: DIC-network
+    driver: bridge
