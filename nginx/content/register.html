@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Digital IT Consulting</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f181f;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            position: relative;
+        }
+
+        .container {
+            background-color: rgb(243, 242, 242, 0.5);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            height: 350px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #73f005;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+            min-width: 100px;
+            flex-shrink: 0;
+        }
+
+        .input-field {
+            width: 70%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .checkbox {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .checkbox input {
+            margin-right: 5px;
+            margin-left: 20px;
+        }
+
+        button {
+            width: 50%;
+            padding: 10px 20px;
+            font-size: 1rem;
+            background: #8dc21f;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #ffffff;
+        }
+
+        button:hover {
+            background: #8dc21f;
+            color: #ffffff;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .login-link a {
+            text-decoration: none;
+            color: #018103;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Register</h1>
+        <form onsubmit="login(event)">
+            <div class="form-group">
+                <label for="email">Email: </label>
+                <input type="email" id="email" class="input-field" placeholder="Email" required />
+            </div>
+            <div class="form-group">
+                <label for="password">Password: </label>
+                <input type="password" id="password" class="input-field" placeholder="Password" required />
+            </div>
+            <div class="checkbox">
+                <input type="checkbox" id="showPassword" onclick="togglePassword()" />
+                <label for="showPassword">Show Password</label>
+            </div>
+
+            <br>
+            <button type="submit" id="RegisterBtn">Register</button>
+            <div class="login-link">
+                <a href="index.html">
+                    <p>- Login -</p>
+                </a>
+            </div>
+        </form>
+
+        <div id="message"></div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+        }
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+        }
+
+        function setLoading(isLoading) {
+            const button = document.getElementById('RegisterBtn');
+            button.disabled = isLoading;
+            button.textContent = isLoading ? 'Registering...' : 'Register';
+        }
+
+        async function login(event) {
+            event.preventDefault();
+
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            console.log("Email : " + email);
+            console.log("Password : " + password);
+
+            setLoading(true);
+            showMessage('', ''); // Clear previous messages
+
+            try {
+                const response = await fetch("http://10.147.17.2:8501/api/add_new_user", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                else {
+                    window.location.href = "otp.html"
+                }
+            } catch (error) {
+                console.error('Register error:', error);
+                showMessage('Register failed. Please try again.', 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+    </script>
+</body>
+
+</html>
